@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Relatório Inteligente · CPPEM",
+  "version": "1.0.0",
+  "description": "Acesse rapidamente o sistema de relatórios inteligentes da CPPEM.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Relatório Inteligente"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

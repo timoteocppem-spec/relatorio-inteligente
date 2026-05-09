@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44" width="180" height="44">
+  <rect width="180" height="44" fill="transparent"/>
+  <text x="0" y="32" font-family="'Arial Black',Arial,sans-serif" font-size="28" font-weight="900" fill="#00ff66" letter-spacing="3">CPPEM</text>
+  <rect x="0" y="36" width="124" height="2" fill="#00ff66" opacity="0.4" rx="1"/>
+</svg>
