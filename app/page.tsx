@@ -41,7 +41,8 @@ export default function Home() {
   const [copied, setCopied]           = useState(false)
   const [saved, setSaved]             = useState(false)
   const [sectorOpen, setSectorOpen]   = useState(false)
-  const [notionStatus, setNotionStatus] = useState<NotionStatus>('idle')
+  const [notionStatus, setNotionStatus]   = useState<NotionStatus>('idle')
+  const [notionDetail, setNotionDetail]   = useState('')
 
   const chatEndRef = useRef<HTMLDivElement>(null)
   const inputRef   = useRef<HTMLTextAreaElement>(null)
@@ -149,17 +150,27 @@ export default function Home() {
 
   const sendToNotion = async () => {
     setNotionStatus('sending')
+    setNotionDetail('')
     try {
-      const res = await fetch('/api/notion/submit', {
+      const res  = await fetch('/api/notion/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, activities: activities.map(a => a.text), report, aiUsed }),
       })
-      setNotionStatus(res.ok ? 'success' : 'error')
-    } catch {
+      const json = await res.json().catch(() => ({}))
+      if (res.ok) {
+        setNotionStatus('success')
+      } else {
+        setNotionStatus('error')
+        const msg = json.notionMessage || json.error || 'Erro desconhecido'
+        const tip = json.dica ? `\n💡 ${json.dica}` : ''
+        setNotionDetail(msg + tip)
+      }
+    } catch (e) {
       setNotionStatus('error')
+      setNotionDetail('Falha de conexão com o servidor.')
     }
-    setTimeout(() => setNotionStatus('idle'), 6000)
+    setTimeout(() => { setNotionStatus('idle'); setNotionDetail('') }, 10000)
   }
 
   /* ─── HELPERS ─── */
@@ -535,9 +546,18 @@ export default function Home() {
             )}
 
             {notionStatus === 'error' && (
-              <div className="flex items-center gap-3 p-4 bg-red-950/40 border border-red-500/20 rounded-xl animate-in">
-                <span className="text-red-400 text-lg">⚠</span>
-                <p className="text-red-400 text-sm">Não foi possível enviar para o Notion. Verifique a configuração da integração.</p>
+              <div className="p-4 bg-red-950/40 border border-red-500/20 rounded-xl animate-in space-y-1">
+                <p className="text-red-400 text-sm font-semibold flex items-center gap-2">
+                  <span>⚠</span> Não foi possível enviar para o Notion.
+                </p>
+                {notionDetail && (
+                  <p className="text-red-400/70 text-xs leading-relaxed whitespace-pre-line pl-5">
+                    {notionDetail}
+                  </p>
+                )}
+                <p className="text-red-400/50 text-[10px] pl-5">
+                  Diagnóstico detalhado em: <span className="font-mono">/api/notion/test</span>
+                </p>
               </div>
             )}
           </section>
